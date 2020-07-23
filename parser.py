@@ -65,4 +65,5 @@ if __name__ == '__main__':
     parser.add_argument('--output', required=True, type=str)
     args = parser.parse_args()
 
-    asyncio.run(main(args.output))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main(args.output))
