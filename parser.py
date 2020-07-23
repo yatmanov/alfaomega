@@ -2,7 +2,7 @@ import asyncio
 import argparse
 import csv
 from datetime import datetime, timedelta
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urljoin
 
 import aiohttp
 import lxml.html
@@ -18,6 +18,9 @@ async def main(file):
             html = await resp.text()
 
     dom = lxml.html.fromstring(html)
+
+    logo_path = dom.xpath('.//a[@class="tm-logo"]/img/@src')[0]
+    channel_logo_url = urljoin(URL, logo_path)
 
     day_value = dom.xpath('.//option[@selected]/@value')[0]
     query = parse_qs(urlparse(day_value).query)
@@ -38,7 +41,7 @@ async def main(file):
             'datetime_finish': None,
             'channel': el.xpath('./h2/span/text()')[0],
             'title': el.xpath('./h2/text()')[0],
-            'channel_logo_url': el.xpath('./img/@src')[0],
+            'channel_logo_url': channel_logo_url,
             'description': el.xpath('./p/text()')[0],
         })
 
