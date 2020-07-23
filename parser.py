@@ -26,7 +26,6 @@ async def main(file):
 
         other_pages = [urljoin(URL, path) for path in dom.xpath('.//a[contains(@class, "ProductNav")]/@href')]
         pages = await asyncio.gather(*[fetch(session, page) for page in other_pages])
-        pages.append(html)
 
     data = []
     for html in pages:
