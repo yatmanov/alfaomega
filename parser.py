@@ -1,12 +1,14 @@
 import asyncio
 import argparse
 import csv
+import sys
 from datetime import datetime, timedelta
 from urllib.parse import urlparse, parse_qs, urljoin
 
 import aiohttp
 import lxml.html
 
+__version__ = '1.0.0'
 URL = 'https://alfaomega.tv/canal-tv/programul-tv'
 
 
@@ -48,14 +50,14 @@ async def main(file):
             data.append({
                 'datetime_start': datetime_start,
                 'datetime_finish': None,
-                'channel': el.xpath('./h2/span/text()')[0],
+                'channel': 'Alfa Omega TV',
                 'title': el.xpath('./h2/text()')[0],
                 'channel_logo_url': channel_logo_url,
                 'description': el.xpath('./p/text()')[0],
             })
 
     with open(file, mode='w', encoding='utf8', newline='') as f:
-        writer = csv.DictWriter(f, data[0].keys())
+        writer = csv.DictWriter(f, data[0].keys(), delimiter='\t')
         writer.writeheader()
         writer.writerows(data)
 
@@ -64,6 +66,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', required=True, type=str)
     args = parser.parse_args()
+
+    sys.stdout.write(f'Парсер "alfaomega" версии {__version__} выкачивает список программ с "{URL}" в файл "{args.output}"')
+    sys.stdout.flush()
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(args.output))
