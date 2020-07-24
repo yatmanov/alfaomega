@@ -1,14 +1,14 @@
 import asyncio
 import argparse
 import csv
-import sys
+import pathlib
 from datetime import datetime, timedelta
 from urllib.parse import urlparse, parse_qs, urljoin
 
 import aiohttp
 import lxml.html
 
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 URL = 'https://alfaomega.tv/canal-tv/programul-tv'
 
 
@@ -18,7 +18,7 @@ async def fetch(session, url) -> str:
         return await resp.text()
 
 
-async def main(file):
+async def main(file, delay):
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit_per_host=3)) as session:
         html = await fetch(session, URL)
 
@@ -27,10 +27,16 @@ async def main(file):
         channel_logo_url = urljoin(URL, logo_path)
 
         other_pages = [urljoin(URL, path) for path in dom.xpath('.//a[contains(@class, "ProductNav")]/@href')]
-        pages = await asyncio.gather(*[fetch(session, page) for page in other_pages])
+        htmls = []
+        for url in other_pages:
+            try:
+                await asyncio.sleep(delay)
+                htmls.append(await fetch(session, url))
+            except Exception as exc:
+                print(exc)
 
     data = []
-    for html in pages:
+    for html in htmls:
 
         dom = lxml.html.fromstring(html)
 
@@ -65,10 +71,12 @@ async def main(file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', required=True, type=str)
+    parser.add_argument('--delay', required=False, type=int, default=0)
     args = parser.parse_args()
 
-    sys.stdout.write(f'Парсер "alfaomega" версии {__version__} выкачивает список программ с "{URL}" в файл "{args.output}"')
-    sys.stdout.flush()
+    file = pathlib.Path(args.output)
+
+    print(f'Парсер "alfaomega" версии {__version__} выкачивает список программ с "{URL}" в файл "{file}"')
 
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(args.output))
+    loop.run_until_complete(main(file, int(args.delay)))
