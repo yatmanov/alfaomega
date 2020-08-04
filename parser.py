@@ -7,9 +7,11 @@ from urllib.parse import urlparse, parse_qs, urljoin
 
 import aiohttp
 import lxml.html
+import pytz
 
 __version__ = '1.1.0'
 URL = 'https://alfaomega.tv/canal-tv/programul-tv'
+timezone = pytz.timezone('Europe/Bucharest')
 
 
 async def fetch(session, url) -> str:
@@ -48,7 +50,7 @@ async def main(file, delay):
 
             _time = el.get('id').lstrip('dialog_')
             _date = current_day + timedelta(hours=int(_time[:2]), minutes=int(_time[2:]))
-            datetime_start = _date.isoformat()
+            datetime_start = timezone.localize(_date).isoformat()
 
             if i > 0:
                 data[-1]['datetime_finish'] = datetime_start

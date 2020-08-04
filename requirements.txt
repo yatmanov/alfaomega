@@ -75,6 +75,9 @@ multidict==4.7.6 \
     --hash=sha256:5cf311a0f5ef80fe73e4f4c0f0998ec08f954a6ec72b746f3c179e37de1d210d \
     --hash=sha256:7388d2ef3c55a8ba80da62ecfafa06a1c097c18032a501ffd4cabbc52d7f2b19 \
     --hash=sha256:fbb77a75e529021e7c4a8d4e823d88ef4d23674a202be4f5addffc72cbb91430
+pytz==2020.1 \
+    --hash=sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed \
+    --hash=sha256:c35965d010ce31b23eeb663ed3cc8c906275d6be1a34393a1d73a41febf4a048
 typing-extensions==3.7.4.2; python_version < "3.7" \
     --hash=sha256:f8d2bd89d25bc39dabe7d23df520442fa1d8969b82544370e03d88b5a591c392 \
     --hash=sha256:6e95524d8a547a91e08f404ae485bbb71962de46967e1b71a0cb89af24e761c5 \
